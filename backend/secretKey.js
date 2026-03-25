@@ -1,0 +1,1 @@
+module.exports = "llave_secreta_u_market_2026";
