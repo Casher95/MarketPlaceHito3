@@ -1,32 +1,39 @@
-import { useState, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 
 const Login = () => {
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const { login } = useContext(UserContext);
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    login(email);
-    navigate('/'); // Calificación máxima: Redirección inmediata
+    const result = await login(email, password);
+    if (result.success) {
+      navigate('/profile');
+    } else {
+      alert("Correo o contraseña incorrectos.");
+    }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-20 p-12 bg-white rounded-[3rem] shadow-2xl border border-gray-100 text-center">
-      <h2 className="text-4xl font-black text-gray-800 mb-2">HOLA DE NUEVO</h2>
-      <p className="text-gray-400 font-bold mb-10">Ingresa a tu cuenta Tech Station</p>
-      <form onSubmit={handleLogin} className="space-y-6">
-        <input 
-          type="email" 
-          placeholder="nombre@ejemplo.com" 
-          className="w-full p-5 bg-slate-50 border-2 border-transparent rounded-2xl outline-none focus:border-[#7C5DFA] transition-all font-medium"
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <button className="w-full bg-[#7C5DFA] text-white py-5 rounded-2xl font-black text-lg shadow-lg shadow-purple-100 hover:scale-[1.02] transition-transform">
-          Iniciar Sesión
+    <div className="max-w-md mx-auto mt-10 p-8 bg-white rounded-3xl shadow-xl border border-gray-100">
+      <h2 className="text-3xl font-black text-center mb-6 text-gray-800 tracking-tighter">INICIAR SESIÓN</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-bold text-gray-700 mb-1">Correo Electrónico</label>
+          <input type="email" className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-purple-400"
+            value={email} onChange={(e) => setEmail(e.target.value)} required />
+        </div>
+        <div>
+          <label className="block text-sm font-bold text-gray-700 mb-1">Contraseña</label>
+          <input type="password" className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-purple-400"
+            value={password} onChange={(e) => setPassword(e.target.value)} required />
+        </div>
+        <button type="submit" className="w-full bg-[#7C5DFA] text-white py-4 rounded-xl font-bold mt-4 hover:bg-purple-700 shadow-lg shadow-purple-100">
+          Entrar
         </button>
       </form>
     </div>

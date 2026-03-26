@@ -1,29 +1,73 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 
 export const UserContext = createContext();
+
+// URL de tu Backend en Render (el que ya dice LIVE)
+const API_URL = "https://softjobs-backend.onrender.com";
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [favorites, setFavorites] = useState([]);
-  const [products] = useState([
-    { id: 1, name: 'MacBook Pro M2', price: 24500, category: 'Laptops' },
-    { id: 2, name: 'iPhone 15 Pro', price: 19900, category: 'Telefonía' },
-    { id: 3, name: 'Monitor Gamer 27"', price: 5800, category: 'Computadoras' },
-  ]);
+  const [products, setProducts] = useState([]);
 
-  const login = (email) => setUser({ email });
-  const logout = () => { setUser(null); setFavorites([]); };
+  // Carga los productos reales desde PostgreSQL en Ohio
+  const getProducts = async () => {
+    try {
+      const response = await fetch(`${API_URL}/productos`);
+      const data = await response.json();
+      setProducts(data);
+    } catch (error) {
+      console.error("Error al obtener productos:", error);
+    }
+  };
 
-  const toggleFavorite = (product) => {
-    setFavorites((prev) => 
-      prev.find(p => p.id === product.id) 
-        ? prev.filter(p => p.id !== product.id) 
-        : [...prev, product]
-    );
+  useEffect(() => {
+    getProducts();
+  }, []);
+
+  // Función de Registro conectada a Render
+  const register = async (usuario) => {
+    try {
+      const response = await fetch(`${API_URL}/usuarios`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(usuario),
+      });
+      return response.ok;
+    } catch (error) {
+      console.error("Error en registro:", error);
+      return false;
+    }
+  };
+
+  // Función de Login con JWT
+  const login = async (email, password) => {
+    try {
+      const response = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setUser({ email: data.email });
+        localStorage.setItem("token", data.token);
+        return { success: true };
+      }
+      return { success: false };
+    } catch (error) {
+      console.error("Error en login:", error);
+      return { success: false };
+    }
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem("token");
   };
 
   return (
-    <UserContext.Provider value={{ user, login, logout, favorites, toggleFavorite, products }}>
+    <UserContext.Provider value={{ user, login, register, logout, products, favorites, setFavorites }}>
       {children}
     </UserContext.Provider>
   );

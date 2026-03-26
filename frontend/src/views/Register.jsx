@@ -1,19 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../context/UserContext'; // Verifica que el nombre coincida
 
 const Register = () => {
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
-  });
+  const [formData, setFormData] = useState({ email: '', password: '', username: '' });
+  const { register } = useContext(UserContext);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("¡Registro exitoso! Ahora puedes iniciar sesión.");
-    navigate('/login');
+    const success = await register({
+      email: formData.email,
+      password: formData.password,
+      rol: 'User',
+      lenguajes: 'JavaScript'
+    });
+
+    if (success) {
+      alert("¡Cuenta creada con éxito en la nube!");
+      navigate('/login');
+    } else {
+      alert("Error al registrar: El usuario podría ya existir en la DB.");
+    }
   };
 
   return (
@@ -22,32 +30,20 @@ const Register = () => {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-1">Nombre de Usuario</label>
-          <input 
-            type="text" 
-            className="w-full p-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-purple-400 outline-none"
-            onChange={(e) => setFormData({...formData, username: e.target.value})}
-            required
-          />
+          <input type="text" className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-purple-400"
+            onChange={(e) => setFormData({...formData, username: e.target.value})} required />
         </div>
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-1">Correo Institucional</label>
-          <input 
-            type="email" 
-            className="w-full p-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-purple-400 outline-none"
-            onChange={(e) => setFormData({...formData, email: e.target.value})}
-            required
-          />
+          <label className="block text-sm font-bold text-gray-700 mb-1">Correo Electrónico</label>
+          <input type="email" className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-purple-400"
+            onChange={(e) => setFormData({...formData, email: e.target.value})} required />
         </div>
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-1">Contraseña</label>
-          <input 
-            type="password" 
-            className="w-full p-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-purple-400 outline-none"
-            onChange={(e) => setFormData({...formData, password: e.target.value})}
-            required
-          />
+          <input type="password" className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-purple-400"
+            onChange={(e) => setFormData({...formData, password: e.target.value})} required />
         </div>
-        <button type="submit" className="w-full bg-[#7C5DFA] text-white py-4 rounded-xl font-bold mt-4 hover:bg-purple-700 transition shadow-lg shadow-purple-100">
+        <button type="submit" className="w-full bg-[#7C5DFA] text-white py-4 rounded-xl font-bold mt-4 hover:bg-purple-700 shadow-lg shadow-purple-100">
           Registrarme
         </button>
       </form>
