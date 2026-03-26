@@ -28,6 +28,7 @@ app.post("/login", async (req, res) => {
         const { email, password } = req.body;
         const usuario = await obtenerUsuario(email);
         
+        // Nota: En producción se recomienda bcrypt para comparar contraseñas
         if (usuario && usuario.password === password) {
             const token = jwt.sign({ email }, secretKey);
             res.send({ token });
@@ -42,6 +43,7 @@ app.post("/login", async (req, res) => {
 // 3. Obtener Perfil (Ruta Protegida)
 app.get("/usuarios", verificarToken, async (req, res) => {
     try {
+        // req.email viene del middleware verificarToken
         const usuario = await obtenerUsuario(req.email);
         res.json(usuario);
     } catch (error) {
@@ -49,11 +51,14 @@ app.get("/usuarios", verificarToken, async (req, res) => {
     }
 });
 
+// Configuración del Puerto para Render
+const PORT = process.env.PORT || 3000;
+
 // Levantar servidor SOLO si no estamos en modo de prueba
 if (process.env.NODE_ENV !== 'test') {
-    app.listen(3000, () => {
-        console.log("Servidor backend corriendo en puerto 3000");
+    app.listen(PORT, () => {
+        console.log(`Servidor backend corriendo en puerto ${PORT}`);
     });
 }
 
-module.exports = app; // Necesario para los tests
+module.exports = app;
