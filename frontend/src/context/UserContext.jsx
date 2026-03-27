@@ -2,7 +2,7 @@ import React, { createContext, useState, useEffect } from 'react';
 
 export const UserContext = createContext();
 
-// URL de tu Backend en Render (el que ya dice LIVE)
+// URL de tu Backend en Render (la que ya te da "Cannot GET /")
 const API_URL = "https://softjobs-backend.onrender.com";
 
 export const UserProvider = ({ children }) => {
@@ -10,7 +10,7 @@ export const UserProvider = ({ children }) => {
   const [favorites, setFavorites] = useState([]);
   const [products, setProducts] = useState([]);
 
-  // Carga los productos reales desde PostgreSQL en Ohio
+  // Carga los productos reales desde la base de datos de Ohio
   const getProducts = async () => {
     try {
       const response = await fetch(`${API_URL}/productos`);
@@ -25,7 +25,7 @@ export const UserProvider = ({ children }) => {
     getProducts();
   }, []);
 
-  // Función de Registro conectada a Render
+  // Función de Registro conectada al Backend
   const register = async (usuario) => {
     try {
       const response = await fetch(`${API_URL}/usuarios`, {
@@ -40,7 +40,7 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-  // Función de Login con JWT
+  // Función de Login con validación JWT
   const login = async (email, password) => {
     try {
       const response = await fetch(`${API_URL}/login`, {
@@ -51,7 +51,7 @@ export const UserProvider = ({ children }) => {
       const data = await response.json();
       if (response.ok) {
         setUser({ email: data.email });
-        localStorage.setItem("token", data.token);
+        localStorage.setItem("token", data.token); // Almacena el token de seguridad
         return { success: true };
       }
       return { success: false };
@@ -67,7 +67,9 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, login, register, logout, products, favorites, setFavorites }}>
+    <UserContext.Provider value={{ 
+      user, login, register, logout, products, favorites, setFavorites 
+    }}>
       {children}
     </UserContext.Provider>
   );

@@ -12,9 +12,9 @@ const Login = () => {
     e.preventDefault();
     const result = await login(email, password);
     if (result.success) {
-      navigate('/profile');
+      navigate('/profile'); // Redirige al perfil tras el éxito
     } else {
-      alert("Correo o contraseña incorrectos.");
+      alert("Credenciales incorrectas. Intenta de nuevo.");
     }
   };
 
@@ -32,7 +32,7 @@ const Login = () => {
           <input type="password" className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-purple-400"
             value={password} onChange={(e) => setPassword(e.target.value)} required />
         </div>
-        <button type="submit" className="w-full bg-[#7C5DFA] text-white py-4 rounded-xl font-bold mt-4 hover:bg-purple-700 shadow-lg shadow-purple-100">
+        <button type="submit" className="w-full bg-[#7C5DFA] text-white py-4 rounded-xl font-bold mt-4 hover:bg-purple-700 transition">
           Entrar
         </button>
       </form>

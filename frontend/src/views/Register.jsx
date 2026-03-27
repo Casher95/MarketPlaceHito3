@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../context/UserContext'; // Verifica que el nombre coincida
+import { UserContext } from '../context/UserContext';
 
 const Register = () => {
   const [formData, setFormData] = useState({ email: '', password: '', username: '' });
@@ -9,6 +9,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Enviamos los datos al servidor en Render
     const success = await register({
       email: formData.email,
       password: formData.password,
@@ -20,7 +21,7 @@ const Register = () => {
       alert("¡Cuenta creada con éxito en la nube!");
       navigate('/login');
     } else {
-      alert("Error al registrar: El usuario podría ya existir en la DB.");
+      alert("Error al registrar: El usuario podría ya existir.");
     }
   };
 
@@ -43,8 +44,8 @@ const Register = () => {
           <input type="password" className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-purple-400"
             onChange={(e) => setFormData({...formData, password: e.target.value})} required />
         </div>
-        <button type="submit" className="w-full bg-[#7C5DFA] text-white py-4 rounded-xl font-bold mt-4 hover:bg-purple-700 shadow-lg shadow-purple-100">
-          Registrarme
+        <button type="submit" className="w-full bg-[#7C5DFA] text-white py-4 rounded-xl font-bold mt-4 hover:bg-purple-700 transition">
+          Registrarme en el Marketplace
         </button>
       </form>
     </div>
