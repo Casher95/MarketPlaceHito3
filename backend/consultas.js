@@ -1,14 +1,26 @@
 const { Pool } = require('pg');
+require('dotenv').config();
 
-// Configuración de la conexión usando la URL externa de Render
+// Configuración con SSL obligatorio para Render
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false // Requerido para conexiones seguras con Render
+    rejectUnauthorized: false 
   }
 });
 
-// Función para registrar un nuevo usuario
+// Obtener productos (La ruta que te fallaba)
+const getProductos = async () => {
+  try {
+    const { rows } = await pool.query("SELECT * FROM productos");
+    return rows;
+  } catch (error) {
+    console.error("Error en SELECT productos:", error);
+    throw error;
+  }
+};
+
+// Registrar usuario
 const registrarUsuario = async (usuario) => {
   const { email, password, rol, lenguaje } = usuario;
   const query = "INSERT INTO usuarios (email, password, rol, lenguaje) VALUES ($1, $2, $3, $4)";
@@ -16,16 +28,12 @@ const registrarUsuario = async (usuario) => {
   await pool.query(query, values);
 };
 
-// Función para obtener un usuario por email (usada en Login y Perfil)
-const obtenerUsuario = async (email) => {
-    const query = "SELECT * FROM usuarios WHERE email = $1";
-    const values = [email];
-    const { rows: [usuario], rowCount } = await pool.query(query, values);
-
-    if (!rowCount) {
-        throw { code: 404, message: "No se encontró ningún usuario con este email" };
-    }
-    return usuario;
+// Verificar credenciales para Login
+const verificarCredenciales = async (email, password) => {
+  const query = "SELECT * FROM usuarios WHERE email = $1 AND password = $2";
+  const values = [email, password];
+  const { rows: [usuario], rowCount } = await pool.query(query, values);
+  return rowCount > 0 ? usuario : null;
 };
 
-module.exports = { registrarUsuario, obtenerUsuario };
+module.exports = { getProductos, registrarUsuario, verificarCredenciales };

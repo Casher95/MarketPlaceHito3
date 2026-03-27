@@ -1,43 +1,42 @@
 const express = require('express');
 const cors = require('cors');
-const { getProductos, registrarUsuario, verificarCredenciales } = require('./consultas'); // Asegúrate de que existan en consultas.js
+const { getProductos, registrarUsuario, verificarCredenciales } = require('./database/config');
 const jwt = require('jsonwebtoken');
-const secretKey = require('./secretKey');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const secretKey = process.env.JWT_SECRET || "llave_secreta_u_market_2026";
 
-// Middleware - ¡Vital para que el frontend se conecte!
+// Middlewares
 app.use(cors());
 app.use(express.json());
 
-// 1. Ruta Raíz (Para que no diga Cannot GET /)
+// Ruta de prueba
 app.get("/", (req, res) => {
-  res.send("Servidor Marketplace Online 🚀");
+  res.send("Marketplace API is Live 🚀");
 });
 
-// 2. RUTA DE PRODUCTOS (Esto solucionará tu error actual)
+// GET /productos
 app.get("/productos", async (req, res) => {
   try {
     const productos = await getProductos();
-    res.json(productos); // Si la DB está vacía, aquí verás []
+    res.json(productos);
   } catch (error) {
-    res.status(500).send("Error al obtener productos");
+    res.status(500).send("Error al obtener productos de la base de datos");
   }
 });
 
-// 3. Ruta de Registro
+// POST /usuarios (Registro)
 app.post("/usuarios", async (req, res) => {
   try {
-    const usuario = req.body;
-    await registrarUsuario(usuario);
+    await registrarUsuario(req.body);
     res.status(201).send("Usuario registrado con éxito");
   } catch (error) {
-    res.status(500).send("Error al registrar usuario");
+    res.status(500).send("Error en el registro");
   }
 });
 
-// 4. Ruta de Login (Genera el JWT)
+// POST /login
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -46,10 +45,10 @@ app.post("/login", async (req, res) => {
       const token = jwt.sign({ email }, secretKey);
       res.json({ email, token });
     } else {
-      res.status(401).send("Credenciales incorrectas");
+      res.status(401).send("Email o contraseña incorrectos");
     }
   } catch (error) {
-    res.status(500).send("Error en el login");
+    res.status(500).send("Error en el servidor");
   }
 });
 
