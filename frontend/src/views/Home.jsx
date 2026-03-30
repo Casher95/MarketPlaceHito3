@@ -11,9 +11,14 @@ const Home = () => {
         U-Market <span className="text-[#7C5DFA]">Tech</span>
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {products.map(prod => (
-          <ProductCard key={prod.id} product={prod} />
-        ))}
+        {/* Agregamos esta validación lógica: solo mapea si products existe y tiene algo */}
+        {products && products.length > 0 ? (
+          products.map(prod => (
+            <ProductCard key={prod.id} product={prod} />
+          ))
+        ) : (
+          <p className="text-gray-500">Cargando productos desde la base de datos...</p>
+        )}
       </div>
     </div>
   );
