@@ -1,48 +1,31 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
-// Importamos la URL de Render que configuramos antes
+// Importamos la URL de Render
 import { BASE_URL } from '../config'; 
 
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [products, setProducts] = useState([]);
 
-  // Función de Registro
-  const register = async (userData) => {
+  // Esta es la función que hace que la interfaz cambie
+  const getProducts = async () => {
     try {
-      // Usamos la constante BASE_URL para apuntar a Render
-      await axios.post(`${BASE_URL}/usuarios`, userData);
-      return true;
+      // Apuntamos a https://softjobs-backend.onrender.com/productos
+      const { data } = await axios.get(`${BASE_URL}/productos`);
+      setProducts(data); 
     } catch (error) {
-      console.error("❌ Error en registro:", error.response?.data || error.message);
-      return false;
+      console.error("❌ Error al cargar productos:", error);
     }
   };
 
-  // Función de Login
-  const login = async (email, password) => {
-    try {
-      const { data } = await axios.post(`${BASE_URL}/login`, { email, password });
-      
-      // Guardamos el token y el usuario (sin el password por seguridad)
-      localStorage.setItem("token", data.token);
-      setUser(data.usuario);
-      
-      return { success: true };
-    } catch (error) {
-      console.error("❌ Error en login:", error.response?.data || error.message);
-      return { success: false };
-    }
-  };
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    setUser(null);
-  };
+  // Ejecutar al cargar la aplicación
+  useEffect(() => {
+    getProducts();
+  }, []);
 
   return (
-    <UserContext.Provider value={{ user, register, login, logout }}>
+    <UserContext.Provider value={{ products, getProducts }}>
       {children}
     </UserContext.Provider>
   );
