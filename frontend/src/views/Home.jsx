@@ -10,7 +10,7 @@ const Home = () => {
     <div className="container mt-5">
       {/* Título de control para confirmar que el despliegue funcionó */}
       <h1 className="text-center mb-5 font-weight-bold">
-        U-MARKET <span className="text-primary">VERSION FINAL PRESENTACIÓN</span>
+       <span className="text-danger">REVISIÓN DE EMERGENCIA ACTIVADA</span>
       </h1>
 
       <div className="row">
