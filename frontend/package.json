@@ -41,13 +41,13 @@
   "main": "postcss.config.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Casher95/MarketPlaceHito2.git"
+    "url": "git+https://github.com/Casher95/MarketPlaceHito3.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Casher95/MarketPlaceHito2/issues"
+    "url": "https://github.com/Casher95/MarketPlaceHito3/issues"
   },
-  "homepage": "https://github.com/Casher95/MarketPlaceHito2#readme"
+  "homepage": "https://github.com/Casher95/MarketPlaceHito3#readme"
 }
