@@ -5,19 +5,26 @@ import { BASE_URL } from '../config';
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  // Mantenemos el estado como 'products' (en minúsculas)
+  // CLAVE 1: Inicializar con un arreglo vacío [] asegura que .length sea 0 y no dé error
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const getProducts = async () => {
     try {
-      // Llamamos al endpoint que definiste en tu backend
+      setLoading(true);
       const { data } = await axios.get(`${BASE_URL}/productos`);
       
-      // Si la tabla 'productos' en la BD tiene datos, 'data' será un arreglo
-      setProducts(Array.isArray(data) ? data : []); 
+      // CLAVE 2: Verificamos que 'data' sea un arreglo antes de guardarlo
+      if (data && Array.isArray(data)) {
+        setProducts(data);
+      } else {
+        setProducts([]);
+      }
     } catch (error) {
       console.error("❌ Error al cargar productos:", error);
-      setProducts([]); // Evita el error de 'undefined' que vimos en consola
+      setProducts([]); 
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -26,7 +33,7 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ products, getProducts }}>
+    <UserContext.Provider value={{ products, getProducts, loading }}>
       {children}
     </UserContext.Provider>
   );
