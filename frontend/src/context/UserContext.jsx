@@ -1,75 +1,48 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState } from 'react';
+import axios from 'axios';
+// Importamos la URL de Render que configuramos antes
+import { BASE_URL } from '../config'; 
 
 export const UserContext = createContext();
 
-// URL de tu Backend en Render (la que ya te da "Cannot GET /")
-const API_URL = "https://softjobs-backend.onrender.com";
-
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [favorites, setFavorites] = useState([]);
-  const [products, setProducts] = useState([]);
 
-  // Carga los productos reales desde la base de datos de Ohio
-  const getProducts = async () => {
+  // Función de Registro
+  const register = async (userData) => {
     try {
-      const response = await fetch(`${API_URL}/productos`);
-      const data = await response.json();
-      setProducts(data);
+      // Usamos la constante BASE_URL para apuntar a Render
+      await axios.post(`${BASE_URL}/usuarios`, userData);
+      return true;
     } catch (error) {
-      console.error("Error al obtener productos:", error);
-    }
-  };
-
-  useEffect(() => {
-    getProducts();
-  }, []);
-
-  // Función de Registro conectada al Backend
-  const register = async (usuario) => {
-    try {
-      const response = await fetch(`${API_URL}/usuarios`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(usuario),
-      });
-      return response.ok;
-    } catch (error) {
-      console.error("Error en registro:", error);
+      console.error("❌ Error en registro:", error.response?.data || error.message);
       return false;
     }
   };
 
-  // Función de Login con validación JWT
+  // Función de Login
   const login = async (email, password) => {
     try {
-      const response = await fetch(`${API_URL}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        setUser({ email: data.email });
-        localStorage.setItem("token", data.token); // Almacena el token de seguridad
-        return { success: true };
-      }
-      return { success: false };
+      const { data } = await axios.post(`${BASE_URL}/login`, { email, password });
+      
+      // Guardamos el token y el usuario (sin el password por seguridad)
+      localStorage.setItem("token", data.token);
+      setUser(data.usuario);
+      
+      return { success: true };
     } catch (error) {
-      console.error("Error en login:", error);
+      console.error("❌ Error en login:", error.response?.data || error.message);
       return { success: false };
     }
   };
 
   const logout = () => {
-    setUser(null);
     localStorage.removeItem("token");
+    setUser(null);
   };
 
   return (
-    <UserContext.Provider value={{ 
-      user, login, register, logout, products, favorites, setFavorites 
-    }}>
+    <UserContext.Provider value={{ user, register, login, logout }}>
       {children}
     </UserContext.Provider>
   );
