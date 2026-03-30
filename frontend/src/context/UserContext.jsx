@@ -1,27 +1,24 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
-import { BASE_URL } from '../config'; 
+
+// Asegúrate de que esta URL sea la de tu backend en Render
+const BASE_URL = 'https://softjobs-backend.onrender.com'; 
 
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  // CLAVE 1: Inicializar con un arreglo vacío [] asegura que .length sea 0 y no dé error
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([]); 
   const [loading, setLoading] = useState(true);
 
   const getProducts = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get(`${BASE_URL}/productos`);
-      
-      // CLAVE 2: Verificamos que 'data' sea un arreglo antes de guardarlo
-      if (data && Array.isArray(data)) {
-        setProducts(data);
-      } else {
-        setProducts([]);
-      }
+      const response = await axios.get(`${BASE_URL}/productos`);
+      // Si la data es un array, lo guardamos; si no, usamos array vacío
+      const data = Array.isArray(response.data) ? response.data : [];
+      setProducts(data);
     } catch (error) {
-      console.error("❌ Error al cargar productos:", error);
+      console.error("❌ Error en la API:", error);
       setProducts([]); 
     } finally {
       setLoading(false);

@@ -1,32 +1,37 @@
 import React, { useContext } from 'react';
-import ProductCard from '../components/ProductCard';
 import { UserContext } from '../context/UserContext';
+// Importa tu componente de Card, ajusta la ruta si es necesario
+import ProductCard from '../components/ProductCard'; 
 
 const Home = () => {
-  // Extraemos products del context
   const { products, loading } = useContext(UserContext);
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-4xl font-black mb-8 text-gray-800 uppercase tracking-tighter">
-        U-Market <span className="text-[#7C5DFA]">TEST</span>
+    <div className="container mt-5">
+      {/* Título de control para confirmar que el despliegue funcionó */}
+      <h1 className="text-center mb-5 font-weight-bold">
+        U-MARKET <span className="text-primary">VERSION FINAL PRESENTACIÓN</span>
       </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* ESTA ES LA PARTE CRÍTICA:
-           1. Verificamos si 'products' existe (no es undefined ni null).
-           2. Verificamos si tiene elementos (.length > 0).
-        */}
-        {products && products.length > 0 ? (
-          products.map((prod) => (
-            <ProductCard key={prod.id} product={prod} />
+      <div className="row">
+        {/* BLINDAJE: Verificamos que products exista y sea un array antes del .length */}
+        {Array.isArray(products) && products.length > 0 ? (
+          products.map((p) => (
+            <div className="col-md-4 mb-4" key={p.id}>
+              <ProductCard product={p} />
+            </div>
           ))
         ) : (
-          /* Mientras products sea undefined o vacío, mostramos esto en lugar de romper la app */
-          <div className="col-span-full text-center py-10">
-            <p className="text-xl text-gray-500 italic">
-              {loading ? "Conectando con la base de datos de Render..." : "No se encontraron productos disponibles."}
-            </p>
+          <div className="col-12 text-center mt-5">
+            {loading ? (
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Cargando...</span>
+              </div>
+            ) : (
+              <div className="alert alert-info">
+                No hay productos disponibles. Revisa la conexión con el Backend.
+              </div>
+            )}
           </div>
         )}
       </div>
