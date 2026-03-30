@@ -1,25 +1,26 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
-// Importamos la URL de Render
 import { BASE_URL } from '../config'; 
 
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
+  // Mantenemos el estado como 'products' (en minúsculas)
   const [products, setProducts] = useState([]);
 
-  // Esta es la función que hace que la interfaz cambie
   const getProducts = async () => {
     try {
-      // Apuntamos a https://softjobs-backend.onrender.com/productos
+      // Llamamos al endpoint que definiste en tu backend
       const { data } = await axios.get(`${BASE_URL}/productos`);
-      setProducts(data); 
+      
+      // Si la tabla 'productos' en la BD tiene datos, 'data' será un arreglo
+      setProducts(Array.isArray(data) ? data : []); 
     } catch (error) {
       console.error("❌ Error al cargar productos:", error);
+      setProducts([]); // Evita el error de 'undefined' que vimos en consola
     }
   };
 
-  // Ejecutar al cargar la aplicación
   useEffect(() => {
     getProducts();
   }, []);
