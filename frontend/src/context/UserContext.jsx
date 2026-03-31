@@ -13,18 +13,28 @@ export const UserProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const getProducts = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(`${BASE_URL}/productos`);
-      // Guardamos la respuesta que viene de la tabla 'productos'
-      setProducts(Array.isArray(response.data) ? response.data : []);
-    } catch (error) {
-      console.error("❌ Error en la API:", error);
-      setProducts([]); 
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    setLoading(true);
+    const response = await axios.get(`${BASE_URL}/productos`);
+    
+    // Mapeamos los datos para asegurar que coincidan con tus variables en español
+    // Esto previene que si la API manda 'name' o 'price', se conviertan a lo que tú usas
+    const dataLimpia = response.data.map(p => ({
+      id: p.id,
+      nombre: p.nombre || p.name || "Producto sin nombre",
+      precio: Number(p.precio || p.price || 0),
+      descripcion: p.descripcion || p.description || "Sin descripción disponible.",
+      img: p.img || p.image || p.imagen
+    }));
+
+    setProducts(dataLimpia);
+  } catch (error) {
+    console.error("❌ Error en la API:", error);
+    setProducts([]); 
+  } finally {
+    setLoading(false);
+  }
+};
 
   const logout = () => setUser(null);
 
