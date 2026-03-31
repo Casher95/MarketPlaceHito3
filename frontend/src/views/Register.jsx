@@ -7,15 +7,14 @@ const Register = () => {
   const { register } = useContext(UserContext);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    // Enviamos los datos al servidor en Render
-    const success = await register({
-      email: formData.email,
-      password: formData.password,
-      rol: 'User',
-      lenguajes: 'JavaScript'
-    });
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const success = await register({
+    email: formData.email,
+    password: formData.password,
+    rol: 'User',
+    lenguaje: 'JavaScript' // <--- Cambiado a singular para que coincida con la BD
+  });
 
     if (success) {
       alert("¡Cuenta creada con éxito en la nube!");

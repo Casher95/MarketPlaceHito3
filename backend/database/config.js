@@ -28,8 +28,8 @@ pool.on('error', (err) => {
  */
 const getProductos = async () => {
   try {
-    // Usamos el nombre calificado "public.productos" para evitar errores de relación
-    const { rows } = await pool.query("SELECT * FROM public.productos");
+    // Consulta limpia sin alias conflictivos
+    const { rows } = await pool.query("SELECT * FROM productos");
     return rows;
   } catch (error) {
     console.error("❌ Error en getProductos:", error.message);

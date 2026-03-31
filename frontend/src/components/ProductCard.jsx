@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, Monitor } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { UserContext } from '../context/UserContext';
 
 const ProductCard = ({ product }) => {
@@ -16,11 +16,14 @@ const ProductCard = ({ product }) => {
         >
           <Heart size={20} className={isFavorite ? "fill-red-500 text-red-500" : "text-gray-300"} />
         </button>
-        <Monitor size={80} className="text-purple-200" />
+        {/* Usamos .img de tu BD */}
+        <img src={product.img} alt={product.nombre} className="h-full w-full object-cover" />
       </div>
       <div className="p-8">
-        <h3 className="text-xl font-bold text-gray-800 mb-2">{product.name}</h3>
-        <p className="text-3xl font-black text-[#7C5DFA]">${product.price.toLocaleString()}</p>
+        <h3 className="text-xl font-bold text-gray-800 mb-2">{product.nombre}</h3>
+        <p className="text-3xl font-black text-[#7C5DFA]">
+          ${product.precio ? product.precio.toLocaleString() : '0'}
+        </p>
         <Link 
           to={`/producto/${product.id}`} 
           className="mt-6 block text-center bg-gray-900 text-white py-4 rounded-2xl font-bold hover:bg-[#7C5DFA] transition-colors"

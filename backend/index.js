@@ -34,11 +34,10 @@ app.get('/', (req, res) => {
 app.get('/productos', async (req, res) => {
     try {
         const productos = await getProductos();
-        res.json(productos);
+        res.json(Array.isArray(productos) ? productos : []); // Forzamos array para evitar el error de length
     } catch (error) {
-        // Log detallado en el servidor, pero genérico para el cliente (seguridad)
         console.error("Error en ruta /productos:", error.message);
-        res.status(500).json({ error: "Error al obtener productos de la base de datos" });
+        res.status(500).json([]); // Enviamos array vacío en lugar de error para que el front no muera
     }
 });
 
